@@ -1,49 +1,30 @@
 import fire
-import re
 import os
 from pathlib import Path
 from rich.console import Console
 from rich.markdown import Markdown
-from .models import DocumentedFile, DocumentationModel
-from .syntax import DocumentedFileSyntax
+from .models import DocumentedFile
 from .utils import (
     list_files_recursively,
     find_file_recursively,
     warn,
     error
 )
-
-SYNTAX_C = DocumentedFileSyntax(
-    open_documentation="/*",
-    body_documentation="*",
-    close_documentation="*/",
-    open_function_declaration=r"^[a-zA-Z_]",
-    close_function_declaration=r"\)\s*\{",
-    open_function_definition="{",
-    function_name=re.compile(r"[a-zA-Z_]\w*(?=\s*\()")
+from .config import (
+    REPODOC_DATABASE_DIR,
+    SUPPORTED_SYNTAXES_TABLE,
+    DOC_THEME,
+    CustomizedDocumentation
 )
-
-SUPPORTED_SYNTAXES_TABLE: dict[str, str] = {
-    ".c": SYNTAX_C,
-    ".h": SYNTAX_C,
-}
-
-
-REPODOC_DATABASE_DIR: str = ".repodoc"
-
-
-class UnixDocumentation(DocumentationModel):
-    NAME: str
-    DESCRIPTION: str
-    RETURN_VALUE: str
 
 
 class RepoDocCLI:
     def __init__(self) -> None:
         os.environ["LESS"] = "-R"
-        self.console: Console = Console()
+        self.console: Console = Console(theme=DOC_THEME)
 
     def load(self, source_path: str) -> None:
+        REPODOC_DATABASE_DIR_PATH: Path = Path(REPODOC_DATABASE_DIR)
         documented_files: list[DocumentedFile] = []
 
         try:
@@ -58,12 +39,11 @@ class RepoDocCLI:
                 ext = source_file.suffix or "no extension"
                 warn(f"skipping '{source_file.name}': no syntax defined for '{ext}' files")
                 continue
-            save_path = Path(REPODOC_DATABASE_DIR) / source_file.stem
             documented_file = DocumentedFile(
                 source_file,
-                save_path,
+                REPODOC_DATABASE_DIR_PATH,
                 syntax,
-                UnixDocumentation
+                CustomizedDocumentation
             )
             documented_files.append(documented_file)
         for documented_file in documented_files:

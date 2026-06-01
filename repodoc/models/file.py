@@ -16,7 +16,7 @@ class DocumentedFile:
                  syntax: DocumentedFileSyntax,
                  documentation_model: Type[DocumentationModel]) -> None:
         self.path: Path = path
-        self.save_directory: Path = save_directory
+        self.save_directory: Path = save_directory / path.parent / path.stem
         self.syntax: DocumentedFileSyntax = syntax
         self.documentation_model: Type[DocumentationModel] = documentation_model
         self.documented_functions: list[DocumentedFunctions] = []
@@ -65,6 +65,7 @@ class DocumentedFile:
 
     def save(self) -> None:
         self.save_directory.mkdir(parents=True, exist_ok=True)
+        print(self.save_directory)
         for documented_functions in self.documented_functions:
             for func_name in documented_functions.declarations.keys():
                 doc_file = self.save_directory / f"{func_name}.md"
