@@ -12,17 +12,16 @@ def list_files_recursively(path: str) -> list[Path]:
     return list(file_path.rglob("*"))
 
 
-def find_file_recursively(source_directory: str, file_name: str) -> Path | None:
+def find_file_recursively(source_directory: str, find_file_name: str) -> Path | None:
     directory_path: Path = Path(source_directory)
     if not directory_path.exists():
         raise FileNotFoundError(
             f"No such file or directory: {str(directory_path)}"
         )
-    doc_file: str = file_name + ".md"
     for file in directory_path.rglob("*"):
         if not file.is_file():
             continue
-        if file.name == doc_file:
+        if file.name == find_file_name:
             return file
     return None
 

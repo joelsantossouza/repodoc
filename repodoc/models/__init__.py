@@ -1,3 +1,2 @@
-from .documentation import DocumentationModel
-from .function import DocumentedFunctions
+from .function import DocumentedFunctions, FunctionDocumentationModel
 from .file import DocumentedFile

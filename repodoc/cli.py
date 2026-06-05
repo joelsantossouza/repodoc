@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from rich.console import Console
 from rich.markdown import Markdown
-from .models import DocumentedFile
+from .models import DocumentedFile, FunctionDocumentationModel
 from .utils import (
     list_files_recursively,
     find_file_recursively,
@@ -34,6 +34,8 @@ class RepoDocCLI:
             exit(1)
 
         for source_file in source_files:
+            if not source_file.is_file():
+                continue
             syntax = SUPPORTED_SYNTAXES_TABLE.get(source_file.suffix)
             if syntax is None:
                 ext = source_file.suffix or "no extension"
@@ -50,17 +52,26 @@ class RepoDocCLI:
             documented_file.extract_documented_functions()
             documented_file.save()
 
+    def list(self) -> None:
+        doc_files: list[Path] = list_files_recursively(REPODOC_DATABASE_DIR)
+        for doc_file in doc_files:
+            if not doc_file.is_file():
+                continue
+            doc_file_content: str = doc_file.read_text()
+            print(CustomizedDocumentation.from_raw(doc_file_content).get_functions_name())
+
     def search(self, function_name: str) -> None:
         if not Path(REPODOC_DATABASE_DIR).exists():
             error("No database found. Run 'repodoc load <source_path>' first to index your files.")
             exit(1)
-        doc_file: Path | None = find_file_recursively(REPODOC_DATABASE_DIR, function_name)
+        doc_file: Path | None = find_file_recursively(REPODOC_DATABASE_DIR, function_name + ".md")
         if doc_file is None:
             error(f"No documentation found for function '{function_name}' in the database.")
             exit(1)
+        function_documentation = CustomizedDocumentation.from_raw(doc_file.read_text())
         with self.console.pager(styles=True):
             self.console.print(
-                Markdown(doc_file.read_text())
+                Markdown(function_documentation.to_markdown())
             )
 
 

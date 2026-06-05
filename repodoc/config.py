@@ -1,5 +1,5 @@
 import re
-from .models import DocumentationModel
+from .models import FunctionDocumentationModel
 from .syntax import DocumentedFileSyntax
 from rich.theme import Theme
 
@@ -27,7 +27,12 @@ DOC_THEME = Theme({
 })
 
 
-class CustomizedDocumentation(DocumentationModel):
+class CustomizedDocumentation(FunctionDocumentationModel):
     NAME: str
     DESCRIPTION: str
     RETURN_VALUE: str
+
+    def get_functions_name(self) -> list[str]:
+        return [
+            name.strip() for name in self.NAME.split("-")[0].split(",")
+        ]
