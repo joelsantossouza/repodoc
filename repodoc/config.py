@@ -2,8 +2,9 @@ import re
 from .models import FunctionDocumentationModel
 from .syntax import DocumentedFileSyntax
 from rich.theme import Theme
+from pathlib import Path
 
-REPODOC_DATABASE_DIR: str = ".repodoc"
+REPODOC_DATABASE_PATH: Path = Path(".repodoc/repodoc.db")
 
 
 SYNTAX_C = DocumentedFileSyntax(
@@ -36,3 +37,6 @@ class CustomizedDocumentation(FunctionDocumentationModel):
         return [
             name.strip() for name in self.NAME.split("-")[0].split(",")
         ]
+
+    def get_short_description(self) -> str:
+        return self.NAME.split("-")[1].strip()

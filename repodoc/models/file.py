@@ -2,7 +2,6 @@ import re
 from typing import Type
 from pydantic import ValidationError
 from pathlib import Path
-from rich import print
 from . import FunctionDocumentationModel, DocumentedFunctions
 from ..syntax import DocumentedFileSyntax
 from ..utils import error
@@ -11,11 +10,9 @@ from ..utils import error
 class DocumentedFile:
     def __init__(self,
                  path: Path,
-                 save_directory: Path,
                  syntax: DocumentedFileSyntax,
                  documentation_model: Type[FunctionDocumentationModel]) -> None:
         self.path: Path = path
-        self.save_directory: Path = save_directory / path.parent / path.stem
         self.syntax: DocumentedFileSyntax = syntax
         self.documentation_model: Type[FunctionDocumentationModel] = documentation_model
         self.documented_functions: list[DocumentedFunctions] = []
@@ -66,11 +63,3 @@ class DocumentedFile:
             SYNTAX.clean_func(func)
             for func in re.findall(SYNTAX.function_declaration, raw_data)
         ]
-
-    def save(self) -> None:
-        self.save_directory.mkdir(parents=True, exist_ok=True)
-        for documented_functions in self.documented_functions:
-            for func_name in documented_functions.declarations.keys():
-                doc_file = self.save_directory / f"{func_name}.md"
-                doc_file.write_text(documented_functions.documentation._raw)
-                print(f"saved '{str(doc_file)}'")
