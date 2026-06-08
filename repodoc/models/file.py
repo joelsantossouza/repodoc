@@ -44,14 +44,14 @@ class DocumentedFile:
                 for err in e.errors():
                     field = err['loc'][0].replace('_', ' ')
                     error(
-                        f"{str(self.path)}:{line_number}: "
+                        f"{self.path}:{line_number}: "
                         f"missing required section '{field}' in documentation",
                     )
                 continue
             try:
                 documented_functions.validate()
             except ValueError as e:
-                error(f"{str(self.path)}:{line_number}: {e}")
+                error(f"{self.path}:{line_number}: {e}")
                 continue
             self.documented_functions.append(documented_functions)
         return self.documented_functions

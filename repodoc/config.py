@@ -39,4 +39,4 @@ class CustomizedDocumentation(FunctionDocumentationModel):
         ]
 
     def get_short_description(self) -> str:
-        return self.NAME.split("-")[1].strip()
+        return self.NAME.split("-", 1)[1].strip()

@@ -12,8 +12,11 @@ CREATE TABLE IF NOT EXISTS documentations (
 """
 
 DB_TABLE_DOCUMENTATIONS_INSERT: str = """
-INSERT OR IGNORE INTO documentations (id, short_description, content)
+INSERT INTO documentations (id, short_description, content)
 VALUES (?, ?, ?)
+ON CONFLICT(id) DO UPDATE SET
+    short_description = excluded.short_description,
+    content = excluded.content;
 """
 
 DOC_ID: str = "documentations.id"

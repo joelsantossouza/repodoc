@@ -5,17 +5,8 @@ from rich import print
 from rich.console import Console
 from rich.markdown import Markdown
 from .database import RepodocDB
-from .models import (
-    DocumentedRepository,
-    DocumentedFile,
-    FunctionDocumentationModel
-)
-from .utils import (
-    list_files_recursively,
-    find_file_recursively,
-    warn,
-    error
-)
+from .models import DocumentedRepository
+from .utils import error
 from .config import (
     REPODOC_DATABASE_PATH,
     DOC_THEME,

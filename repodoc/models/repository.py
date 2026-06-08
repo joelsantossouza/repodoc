@@ -22,7 +22,7 @@ class DocumentedRepository:
             syntax = SUPPORTED_SYNTAXES_TABLE.get(source_file.suffix, None)
             if syntax is None:
                 ext = source_file.suffix or "no extension"
-                warn(f"skipping '{source_file.name}': no syntax defined for '{ext}' files")
+                warn(f"skipping '{source_file}': no syntax defined for '{ext}' files")
                 continue
             documented_file = DocumentedFile(
                 source_file,
