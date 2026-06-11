@@ -30,8 +30,8 @@ class RepodocCLI:
             for documented_function in documented_file.documented_functions:
                 self.db.insert_documented_functions(documented_function)
 
-    def search(self) -> None:
-        funcs = self.db.select_functions()
+    def search(self, name: str = "") -> None:
+        funcs = self.db.select_functions_by_name_contains(name)
         for _, name, _, short_description, _ in funcs:
             print(f"[bold white]{name}[/bold white]\t- {short_description}")
 

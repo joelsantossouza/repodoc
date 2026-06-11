@@ -121,3 +121,13 @@ class RepodocDB:
             )
             rows = cur.fetchall()
             return rows[0] if rows else None
+
+    def select_functions_by_name_contains(self, name: str) -> list[tuple]:
+        with self._connect() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                f"{DB_TABLE_FUNCTIONS_SELECT} "
+                f"WHERE LOWER({FUNC_NAME}) LIKE LOWER(?)",
+                (f"%{name}%",)
+            )
+            return cur.fetchall()
